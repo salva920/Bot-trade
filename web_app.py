@@ -123,7 +123,6 @@ def config_page():
 @app.route('/api/config', methods=['GET', 'POST'])
 def api_config():
     """API para obtener/actualizar configuración"""
-    global bot_config
     
     if request.method == 'POST':
         data = request.json
@@ -135,7 +134,6 @@ def api_config():
 @app.route('/api/update_config', methods=['POST'])
 def update_config():
     """API para actualizar configuración desde el formulario"""
-    global bot_config
     
     try:
         data = request.json
@@ -188,7 +186,6 @@ def update_config():
 @app.route('/api/start_bot', methods=['POST'])
 def start_bot():
     """Iniciar el bot"""
-    global bot_status
     
     if not bot_status['running']:
         if conectar_mt5():
@@ -208,7 +205,6 @@ def start_bot():
 @app.route('/api/stop_bot', methods=['POST'])
 def stop_bot():
     """Detener el bot"""
-    global bot_status
     
     bot_status['running'] = False
     bot_status['connected'] = False
