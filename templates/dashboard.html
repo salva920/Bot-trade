@@ -1,0 +1,309 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bot Trading Dashboard</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        .status-card {
+            border-radius: 15px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            transition: transform 0.2s;
+        }
+        .status-card:hover {
+            transform: translateY(-2px);
+        }
+        .tendency-bull {
+            color: #28a745;
+            font-weight: bold;
+        }
+        .tendency-bear {
+            color: #dc3545;
+            font-weight: bold;
+        }
+        .tendency-neutral {
+            color: #6c757d;
+        }
+        .signal-alert {
+            animation: pulse 2s infinite;
+        }
+        @keyframes pulse {
+            0% { opacity: 1; }
+            50% { opacity: 0.5; }
+            100% { opacity: 1; }
+        }
+    </style>
+</head>
+<body class="bg-light">
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+        <div class="container">
+            <a class="navbar-brand" href="#">
+                <i class="fas fa-robot me-2"></i>Bot Trading Pro
+            </a>
+            <div class="navbar-nav ms-auto">
+                <a class="nav-link" href="/config">
+                    <i class="fas fa-cog me-1"></i>Configuración
+                </a>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container mt-4">
+        <!-- Estado del Bot -->
+        <div class="row mb-4">
+            <div class="col-md-6">
+                <div class="card status-card">
+                    <div class="card-body">
+                        <h5 class="card-title">
+                            <i class="fas fa-power-off me-2"></i>Estado del Bot
+                        </h5>
+                        <div class="d-flex align-items-center">
+                            <div id="bot-status-indicator" class="me-3">
+                                <i class="fas fa-circle text-danger" style="font-size: 1.5rem;"></i>
+                            </div>
+                            <div>
+                                <h6 id="bot-status-text">Desconectado</h6>
+                                <small class="text-muted" id="last-check">Última verificación: --</small>
+                            </div>
+                        </div>
+                        <div class="mt-3">
+                            <button id="start-bot" class="btn btn-success me-2">
+                                <i class="fas fa-play me-1"></i>Iniciar Bot
+                            </button>
+                            <button id="stop-bot" class="btn btn-danger" disabled>
+                                <i class="fas fa-stop me-1"></i>Detener Bot
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="card status-card">
+                    <div class="card-body">
+                        <h5 class="card-title">
+                            <i class="fas fa-chart-line me-2"></i>Estadísticas
+                        </h5>
+                        <div class="row text-center">
+                            <div class="col-4">
+                                <h4 id="total-signals" class="text-primary">0</h4>
+                                <small>Señales</small>
+                            </div>
+                            <div class="col-4">
+                                <h4 id="successful-trades" class="text-success">0</h4>
+                                <small>Exitosas</small>
+                            </div>
+                            <div class="col-4">
+                                <h4 id="current-balance" class="text-info">$0</h4>
+                                <small>Balance</small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Tendencias de Timeframes -->
+        <div class="row mb-4">
+            <div class="col-12">
+                <div class="card status-card">
+                    <div class="card-body">
+                        <h5 class="card-title">
+                            <i class="fas fa-layer-group me-2"></i>Confluencia de Timeframes
+                        </h5>
+                        <div class="row text-center">
+                            <div class="col">
+                                <h6>D1</h6>
+                                <span id="tendency-d1" class="tendency-neutral">--</span>
+                            </div>
+                            <div class="col">
+                                <h6>H4</h6>
+                                <span id="tendency-h4" class="tendency-neutral">--</span>
+                            </div>
+                            <div class="col">
+                                <h6>H1</h6>
+                                <span id="tendency-h1" class="tendency-neutral">--</span>
+                            </div>
+                            <div class="col">
+                                <h6>M15</h6>
+                                <span id="tendency-m15" class="tendency-neutral">--</span>
+                            </div>
+                            <div class="col">
+                                <h6>M5</h6>
+                                <span id="tendency-m5" class="tendency-neutral">--</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Última Señal -->
+        <div class="row mb-4">
+            <div class="col-12">
+                <div class="card status-card">
+                    <div class="card-body">
+                        <h5 class="card-title">
+                            <i class="fas fa-bell me-2"></i>Última Señal
+                        </h5>
+                        <div id="last-signal" class="text-center py-4">
+                            <i class="fas fa-clock text-muted" style="font-size: 3rem;"></i>
+                            <p class="mt-2 text-muted">Esperando señales...</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Configuración Actual -->
+        <div class="row">
+            <div class="col-12">
+                <div class="card status-card">
+                    <div class="card-body">
+                        <h5 class="card-title">
+                            <i class="fas fa-sliders-h me-2"></i>Configuración Actual
+                        </h5>
+                        <div class="row">
+                            <div class="col-md-3">
+                                <strong>Símbolo:</strong> <span id="config-symbol">{{ config.symbol }}</span>
+                            </div>
+                            <div class="col-md-3">
+                                <strong>Lote:</strong> <span id="config-lot">{{ config.lot_size }}</span>
+                            </div>
+                            <div class="col-md-3">
+                                <strong>ADX Mín:</strong> <span id="config-adx">{{ config.adx_min }}</span>
+                            </div>
+                            <div class="col-md-3">
+                                <strong>Volumen Mín:</strong> <span id="config-volume">{{ config.volume_min }}</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.0.1/socket.io.js"></script>
+    <script>
+        const socket = io();
+        
+        // Elementos del DOM
+        const startBtn = document.getElementById('start-bot');
+        const stopBtn = document.getElementById('stop-bot');
+        const statusIndicator = document.getElementById('bot-status-indicator');
+        const statusText = document.getElementById('bot-status-text');
+        
+        // Eventos de botones
+        startBtn.addEventListener('click', async () => {
+            const response = await fetch('/api/start_bot', { method: 'POST' });
+            const data = await response.json();
+            
+            if (data.success) {
+                startBtn.disabled = true;
+                stopBtn.disabled = false;
+                showAlert('success', data.message);
+            } else {
+                showAlert('danger', data.message);
+            }
+        });
+        
+        stopBtn.addEventListener('click', async () => {
+            const response = await fetch('/api/stop_bot', { method: 'POST' });
+            const data = await response.json();
+            
+            if (data.success) {
+                startBtn.disabled = false;
+                stopBtn.disabled = true;
+                showAlert('info', data.message);
+            }
+        });
+        
+        // Socket events
+        socket.on('bot_update', (data) => {
+            updateDashboard(data);
+        });
+        
+        socket.on('new_signal', (signal) => {
+            showSignal(signal);
+        });
+        
+        function updateDashboard(data) {
+            // Actualizar estado
+            if (data.connected) {
+                statusIndicator.innerHTML = '<i class="fas fa-circle text-success" style="font-size: 1.5rem;"></i>';
+                statusText.textContent = 'Conectado';
+            } else {
+                statusIndicator.innerHTML = '<i class="fas fa-circle text-danger" style="font-size: 1.5rem;"></i>';
+                statusText.textContent = 'Desconectado';
+            }
+            
+            // Actualizar estadísticas
+            document.getElementById('total-signals').textContent = data.total_signals;
+            document.getElementById('successful-trades').textContent = data.successful_trades;
+            document.getElementById('current-balance').textContent = `$${data.current_balance.toFixed(2)}`;
+            document.getElementById('last-check').textContent = `Última verificación: ${data.last_check || '--'}`;
+            
+            // Actualizar tendencias
+            if (data.tendencies) {
+                updateTendency('d1', data.tendencies.D1);
+                updateTendency('h4', data.tendencies.H4);
+                updateTendency('h1', data.tendencies.H1);
+                updateTendency('m15', data.tendencies.M15);
+                updateTendency('m5', data.tendencies.M5);
+            }
+        }
+        
+        function updateTendency(timeframe, tendency) {
+            const element = document.getElementById(`tendency-${timeframe}`);
+            element.textContent = tendency || '--';
+            element.className = `tendency-${tendency === 'alcista' ? 'bull' : tendency === 'bajista' ? 'bear' : 'neutral'}`;
+        }
+        
+        function showSignal(signal) {
+            const signalDiv = document.getElementById('last-signal');
+            const icon = signal.type === 'BUY' ? 'fa-arrow-up' : 'fa-arrow-down';
+            const color = signal.type === 'BUY' ? 'success' : 'danger';
+            
+            signalDiv.innerHTML = `
+                <div class="signal-alert">
+                    <i class="fas ${icon} text-${color}" style="font-size: 3rem;"></i>
+                    <h4 class="mt-2 text-${color}">${signal.type}</h4>
+                    <p class="mb-1"><strong>Precio:</strong> ${signal.price}</p>
+                    <p class="mb-1"><strong>Factor Riesgo:</strong> ${signal.factor_riesgo.toFixed(2)}</p>
+                    <small class="text-muted">${signal.time}</small>
+                </div>
+            `;
+        }
+        
+        function showAlert(type, message) {
+            const alertDiv = document.createElement('div');
+            alertDiv.className = `alert alert-${type} alert-dismissible fade show position-fixed`;
+            alertDiv.style.top = '20px';
+            alertDiv.style.right = '20px';
+            alertDiv.style.zIndex = '9999';
+            alertDiv.innerHTML = `
+                ${message}
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            `;
+            document.body.appendChild(alertDiv);
+            
+            setTimeout(() => {
+                alertDiv.remove();
+            }, 5000);
+        }
+        
+        // Cargar estado inicial
+        fetch('/api/status')
+            .then(response => response.json())
+            .then(data => {
+                updateDashboard(data);
+                if (data.running) {
+                    startBtn.disabled = true;
+                    stopBtn.disabled = false;
+                }
+            });
+    </script>
+</body>
+</html>

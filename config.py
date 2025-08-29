@@ -1,0 +1,13 @@
+# Configuración de MetaTrader 5
+MT5_LOGIN = 10006727030
+MT5_PASSWORD = "X*J7QuIk"
+MT5_INVESTOR = "*5NaLiNo"
+MT5_SERVER = "MetaQuotes-Demo"
+
+SYMBOL = "EURUSD"
+LOT = 0.1
+RISK_REWARD = 2
+SL_PIPS = 20
+TP_PIPS = 40
+NY_START = (8, 0)   # 8:00 AM NY
+NY_END = (17, 0)    # 5:00 PM NY 

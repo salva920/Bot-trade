@@ -1,0 +1,576 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Configuración - Bot Trading Pro</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <style>
+        body {
+            background-color: #f8f9fa;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 1rem 0;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        .card {
+            border: none;
+            border-radius: 15px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.08);
+            margin-bottom: 2rem;
+        }
+        .card-header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border-radius: 15px 15px 0 0 !important;
+            padding: 1.5rem;
+        }
+        .form-control, .form-select {
+            border-radius: 10px;
+            border: 2px solid #e9ecef;
+            padding: 0.75rem;
+            transition: all 0.3s ease;
+        }
+        .form-control:focus, .form-select:focus {
+            border-color: #667eea;
+            box-shadow: 0 0 0 0.2rem rgba(102, 126, 234, 0.25);
+        }
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border: none;
+            border-radius: 10px;
+            padding: 0.75rem 2rem;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+        .btn-secondary {
+            background: #6c757d;
+            border: none;
+            border-radius: 10px;
+            padding: 0.75rem 2rem;
+            font-weight: 600;
+        }
+        .alert {
+            border-radius: 10px;
+            border: none;
+        }
+        .form-label {
+            font-weight: 600;
+            color: #495057;
+            margin-bottom: 0.5rem;
+        }
+        .section-title {
+            color: #667eea;
+            font-weight: 700;
+            margin-bottom: 1rem;
+            border-bottom: 2px solid #e9ecef;
+            padding-bottom: 0.5rem;
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <div class="header">
+        <div class="container">
+            <div class="d-flex justify-content-between align-items-center">
+                <div>
+                    <h1 class="mb-0">
+                        <i class="fas fa-robot me-2"></i>
+                        Bot Trading Pro - Configuración
+                    </h1>
+                </div>
+                <a href="/" class="btn btn-outline-light">
+                    <i class="fas fa-arrow-left me-2"></i>
+                    Volver al Dashboard
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <div class="container mt-4">
+        <!-- Alertas -->
+        <div id="alertContainer"></div>
+
+        <!-- Información de la Estrategia -->
+        <div class="card mb-4">
+            <div class="card-header">
+                <h3 class="mb-0">
+                    <i class="fas fa-brain me-2"></i>
+                    Estrategia del Bot - Confluencia de 4 Timeframes
+                </h3>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-6">
+                        <h5 class="text-primary mb-3">
+                            <i class="fas fa-chart-line me-2"></i>
+                            Concepto Principal
+                        </h5>
+                        <p class="text-muted">
+                            El bot utiliza una estrategia de <strong>confluencia de 4 timeframes</strong> para identificar 
+                            oportunidades de trading de alta probabilidad. La idea es que cuando múltiples timeframes 
+                            están alineados en la misma dirección, la probabilidad de éxito aumenta significativamente.
+                        </p>
+                        
+                        <h6 class="text-success mt-4 mb-2">
+                            <i class="fas fa-layer-group me-2"></i>
+                            Timeframes Utilizados:
+                        </h6>
+                        <ul class="list-unstyled">
+                            <li><strong>D1 (Diario):</strong> Tendencia principal del mercado</li>
+                            <li><strong>H4 (4 Horas):</strong> Confirmación de tendencia intermedia</li>
+                            <li><strong>M15 (15 Minutos):</strong> Confirmación de entrada</li>
+                            <li><strong>M5 (5 Minutos):</strong> Timing preciso de ejecución</li>
+                        </ul>
+                    </div>
+                    
+                    <div class="col-md-6">
+                        <h5 class="text-primary mb-3">
+                            <i class="fas fa-cogs me-2"></i>
+                            Indicadores Técnicos
+                        </h5>
+                        <div class="row">
+                            <div class="col-6">
+                                <h6 class="text-info">EMA (20, 50)</h6>
+                                <small class="text-muted">Tendencias de corto y largo plazo</small>
+                            </div>
+                            <div class="col-6">
+                                <h6 class="text-info">ADX (14)</h6>
+                                <small class="text-muted">Fuerza de la tendencia</small>
+                            </div>
+                        </div>
+                        <div class="row mt-2">
+                            <div class="col-6">
+                                <h6 class="text-info">RSI (14)</h6>
+                                <small class="text-muted">Sobrecompra/sobreventa</small>
+                            </div>
+                            <div class="col-6">
+                                <h6 class="text-info">ATR (20)</h6>
+                                <small class="text-muted">Volatilidad del mercado</small>
+                            </div>
+                        </div>
+                        <div class="row mt-2">
+                            <div class="col-6">
+                                <h6 class="text-info">Volumen</h6>
+                                <small class="text-muted">Confirmación de movimientos</small>
+                            </div>
+                            <div class="col-6">
+                                <h6 class="text-info">Pendiente</h6>
+                                <small class="text-muted">Dirección del momentum</small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <hr class="my-4">
+                
+                <div class="row">
+                    <div class="col-md-12">
+                        <h5 class="text-primary mb-3">
+                            <i class="fas fa-filter me-2"></i>
+                            Filtros de la Estrategia
+                        </h5>
+                        <div class="row">
+                            <div class="col-md-4">
+                                <div class="card bg-light">
+                                    <div class="card-body">
+                                        <h6 class="card-title text-success">
+                                            <i class="fas fa-arrow-up me-2"></i>
+                                            Señal de Compra
+                                        </h6>
+                                        <ul class="list-unstyled small">
+                                            <li>✓ EMA rápida > EMA lenta</li>
+                                            <li>✓ ADX > 25 (tendencia fuerte)</li>
+                                            <li>✓ RSI < 40 y subiendo</li>
+                                            <li>✓ Volumen > 1.2x promedio</li>
+                                            <li>✓ Vela alcista confirmada</li>
+                                            <li>✓ Confluencia 4 timeframes</li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="col-md-4">
+                                <div class="card bg-light">
+                                    <div class="card-body">
+                                        <h6 class="card-title text-danger">
+                                            <i class="fas fa-arrow-down me-2"></i>
+                                            Señal de Venta
+                                        </h6>
+                                        <ul class="list-unstyled small">
+                                            <li>✓ EMA rápida < EMA lenta</li>
+                                            <li>✓ ADX > 25 (tendencia fuerte)</li>
+                                            <li>✓ RSI > 60 y bajando</li>
+                                            <li>✓ Volumen > 1.2x promedio</li>
+                                            <li>✓ Vela bajista confirmada</li>
+                                            <li>✓ Confluencia 4 timeframes</li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="col-md-4">
+                                <div class="card bg-light">
+                                    <div class="card-body">
+                                        <h6 class="card-title text-warning">
+                                            <i class="fas fa-shield-alt me-2"></i>
+                                            Gestión de Riesgo
+                                        </h6>
+                                        <ul class="list-unstyled small">
+                                            <li>✓ Factor riesgo dinámico</li>
+                                            <li>✓ Stop Loss automático</li>
+                                            <li>✓ Take Profit 2:1</li>
+                                            <li>✓ Cooldown 15 min</li>
+                                            <li>✓ Una orden por vela</li>
+                                            <li>✓ Horario NY (8-17)</li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <hr class="my-4">
+                
+                <div class="row">
+                    <div class="col-md-12">
+                        <h5 class="text-primary mb-3">
+                            <i class="fas fa-question-circle me-2"></i>
+                            ¿Por qué estos parámetros?
+                        </h5>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <h6 class="text-success">ADX Mínimo (25)</h6>
+                                <p class="text-muted small">
+                                    El ADX mide la fuerza de la tendencia. Valores > 25 indican que el mercado 
+                                    está en una tendencia clara, no lateral. Esto reduce las señales falsas.
+                                </p>
+                                
+                                <h6 class="text-success">Volumen Mínimo (1.2x)</h6>
+                                <p class="text-muted small">
+                                    El volumen confirma que hay participación real en el movimiento. 
+                                    Volúmenes bajos pueden indicar movimientos técnicos sin fundamento.
+                                </p>
+                                
+                                <h6 class="text-success">RSI (30-70)</h6>
+                                <p class="text-muted small">
+                                    El RSI identifica condiciones de sobrecompra/sobreventa. Buscamos 
+                                    rebotes desde niveles extremos para entrar en la dirección de la tendencia.
+                                </p>
+                            </div>
+                            
+                            <div class="col-md-6">
+                                <h6 class="text-success">ATR Mínimo (0.001)</h6>
+                                <p class="text-muted small">
+                                    El ATR mide la volatilidad. Valores muy bajos indican mercados 
+                                    laterales donde las señales son menos confiables.
+                                </p>
+                                
+                                <h6 class="text-success">Horario NY (8-17)</h6>
+                                <p class="text-muted small">
+                                    El horario de Nueva York es cuando hay mayor liquidez y volatilidad 
+                                    en el mercado forex, proporcionando mejores oportunidades de trading.
+                                </p>
+                                
+                                <h6 class="text-success">Confluencia 4TF</h6>
+                                <p class="text-muted small">
+                                    Cuando D1, H4, M15 y M5 están alineados, la probabilidad de éxito 
+                                    aumenta significativamente. Es como tener 4 confirmaciones diferentes.
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <form id="configForm">
+            <!-- Configuración MT5 -->
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="mb-0">
+                        <i class="fas fa-server me-2"></i>
+                        Configuración MetaTrader 5
+                    </h3>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="mt5_login" class="form-label">Login MT5</label>
+                                <input type="number" class="form-control" id="mt5_login" name="mt5_login" 
+                                       value="{{ config.MT5_LOGIN }}" required>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="mt5_password" class="form-label">Contraseña MT5</label>
+                                <input type="password" class="form-control" id="mt5_password" name="mt5_password" 
+                                       value="{{ config.MT5_PASSWORD }}" required>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="mt5_investor" class="form-label">Contraseña Inversor</label>
+                                <input type="password" class="form-control" id="mt5_investor" name="mt5_investor" 
+                                       value="{{ config.MT5_INVESTOR }}" required>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="mt5_server" class="form-label">Servidor MT5</label>
+                                <input type="text" class="form-control" id="mt5_server" name="mt5_server" 
+                                       value="{{ config.MT5_SERVER }}" required>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Configuración de Trading -->
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="mb-0">
+                        <i class="fas fa-chart-line me-2"></i>
+                        Configuración de Trading
+                    </h3>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-4">
+                            <div class="mb-3">
+                                <label for="symbol" class="form-label">Símbolo</label>
+                                <select class="form-select" id="symbol" name="symbol">
+                                    <option value="EURUSD" {% if config.SYMBOL == 'EURUSD' %}selected{% endif %}>EURUSD</option>
+                                    <option value="GBPUSD" {% if config.SYMBOL == 'GBPUSD' %}selected{% endif %}>GBPUSD</option>
+                                    <option value="USDJPY" {% if config.SYMBOL == 'USDJPY' %}selected{% endif %}>USDJPY</option>
+                                    <option value="AUDUSD" {% if config.SYMBOL == 'AUDUSD' %}selected{% endif %}>AUDUSD</option>
+                                    <option value="USDCAD" {% if config.SYMBOL == 'USDCAD' %}selected{% endif %}>USDCAD</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="mb-3">
+                                <label for="lot" class="form-label">Tamaño de Lote</label>
+                                <input type="number" class="form-control" id="lot" name="lot" 
+                                       value="{{ config.LOT }}" step="0.01" min="0.01" required>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="mb-3">
+                                <label for="risk_reward" class="form-label">Risk/Reward</label>
+                                <input type="number" class="form-control" id="risk_reward" name="risk_reward" 
+                                       value="{{ config.RISK_REWARD }}" step="0.1" min="1" required>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="sl_pips" class="form-label">Stop Loss (Pips)</label>
+                                <input type="number" class="form-control" id="sl_pips" name="sl_pips" 
+                                       value="{{ config.SL_PIPS }}" min="1" required>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="tp_pips" class="form-label">Take Profit (Pips)</label>
+                                <input type="number" class="form-control" id="tp_pips" name="tp_pips" 
+                                       value="{{ config.TP_PIPS }}" min="1" required>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Configuración de Filtros -->
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="mb-0">
+                        <i class="fas fa-filter me-2"></i>
+                        Filtros de la Estrategia
+                    </h3>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-4">
+                            <div class="mb-3">
+                                <label for="adx_min" class="form-label">ADX Mínimo</label>
+                                <input type="number" class="form-control" id="adx_min" name="adx_min" 
+                                       value="{{ config.ADX_MIN }}" min="0" max="100" required>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="mb-3">
+                                <label for="volume_min" class="form-label">Volumen Mínimo</label>
+                                <input type="number" class="form-control" id="volume_min" name="volume_min" 
+                                       value="{{ config.VOLUME_MIN }}" min="0" step="0.1" required>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="mb-3">
+                                <label for="rsi_min" class="form-label">RSI Mínimo</label>
+                                <input type="number" class="form-control" id="rsi_min" name="rsi_min" 
+                                       value="{{ config.RSI_MIN }}" min="0" max="100" required>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="rsi_max" class="form-label">RSI Máximo</label>
+                                <input type="number" class="form-control" id="rsi_max" name="rsi_max" 
+                                       value="{{ config.RSI_MAX }}" min="0" max="100" required>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="atr_min" class="form-label">ATR Mínimo</label>
+                                <input type="number" class="form-control" id="atr_min" name="atr_min" 
+                                       value="{{ config.ATR_MIN }}" min="0" step="0.0001" required>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Configuración de Horarios -->
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="mb-0">
+                        <i class="fas fa-clock me-2"></i>
+                        Horarios de Trading
+                    </h3>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="ny_start_hour" class="form-label">Hora de Inicio NY</label>
+                                <input type="number" class="form-control" id="ny_start_hour" name="ny_start_hour" 
+                                       value="{{ config.NY_START[0] }}" min="0" max="23" required>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="ny_start_minute" class="form-label">Minuto de Inicio NY</label>
+                                <input type="number" class="form-control" id="ny_start_minute" name="ny_start_minute" 
+                                       value="{{ config.NY_START[1] }}" min="0" max="59" required>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="ny_end_hour" class="form-label">Hora de Fin NY</label>
+                                <input type="number" class="form-control" id="ny_end_hour" name="ny_end_hour" 
+                                       value="{{ config.NY_END[0] }}" min="0" max="23" required>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="ny_end_minute" class="form-label">Minuto de Fin NY</label>
+                                <input type="number" class="form-control" id="ny_end_minute" name="ny_end_minute" 
+                                       value="{{ config.NY_END[1] }}" min="0" max="59" required>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Botones de Acción -->
+            <div class="card">
+                <div class="card-body text-center">
+                    <button type="submit" class="btn btn-primary btn-lg me-3">
+                        <i class="fas fa-save me-2"></i>
+                        Guardar Configuración
+                    </button>
+                    <a href="/" class="btn btn-secondary btn-lg">
+                        <i class="fas fa-times me-2"></i>
+                        Cancelar
+                    </a>
+                </div>
+            </div>
+        </form>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        document.getElementById('configForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const formData = new FormData(this);
+            const config = {};
+            
+            for (let [key, value] of formData.entries()) {
+                if (key.includes('ny_start') || key.includes('ny_end')) {
+                    // Manejar arrays para horarios
+                    if (key.includes('hour')) {
+                        const baseKey = key.replace('_hour', '');
+                        if (!config[baseKey]) config[baseKey] = [];
+                        config[baseKey][0] = parseInt(value);
+                    } else if (key.includes('minute')) {
+                        const baseKey = key.replace('_minute', '');
+                        if (!config[baseKey]) config[baseKey] = [];
+                        config[baseKey][1] = parseInt(value);
+                    }
+                } else {
+                    config[key] = value;
+                }
+            }
+            
+            // Enviar configuración al servidor
+            fetch('/api/update_config', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(config)
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    showAlert('Configuración guardada exitosamente', 'success');
+                    setTimeout(() => {
+                        window.location.href = '/';
+                    }, 2000);
+                } else {
+                    showAlert('Error al guardar la configuración: ' + data.error, 'danger');
+                }
+            })
+            .catch(error => {
+                showAlert('Error de conexión: ' + error.message, 'danger');
+            });
+        });
+        
+        function showAlert(message, type) {
+            const alertContainer = document.getElementById('alertContainer');
+            const alert = document.createElement('div');
+            alert.className = `alert alert-${type} alert-dismissible fade show`;
+            alert.innerHTML = `
+                ${message}
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            `;
+            alertContainer.appendChild(alert);
+            
+            // Auto-remove after 5 seconds
+            setTimeout(() => {
+                if (alert.parentNode) {
+                    alert.remove();
+                }
+            }, 5000);
+        }
+    </script>
+</body>
+</html>
