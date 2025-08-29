@@ -11,14 +11,18 @@ def test_project_structure():
     # Archivos principales que deben existir
     required_files = [
         'web_app.py',
+        'web_app_vercel.py',
         'main.py',
         'config.py',
         'requirements.txt',
+        'requirements-vercel.txt',
         'README.md',
+        'VERCEL_DEPLOYMENT.md',
         'LICENSE',
         'CHANGELOG.md',
         'vercel.json',
-        '.gitignore'
+        '.gitignore',
+        '.vercelignore'
     ]
     
     for file in required_files:
@@ -122,6 +126,30 @@ def test_requirements_file():
             assert package in content, f"Dependencia requerida no encontrada: {package}"
 
 
+def test_vercel_requirements_file():
+    """Test que verifica el archivo requirements-vercel.txt"""
+    
+    vercel_requirements_path = 'requirements-vercel.txt'
+    assert os.path.exists(vercel_requirements_path), "requirements-vercel.txt no existe"
+    
+    with open(vercel_requirements_path, 'r', encoding='utf-8') as f:
+        content = f.read()
+        
+        # Verificar que NO contiene MetaTrader5 como dependencia
+        assert 'MetaTrader5==' not in content, "requirements-vercel.txt no debe contener MetaTrader5 como dependencia"
+        
+        # Verificar dependencias web importantes
+        web_packages = [
+            'pandas',
+            'numpy',
+            'Flask',
+            'Flask-SocketIO'
+        ]
+        
+        for package in web_packages:
+            assert package in content, f"Dependencia web requerida no encontrada: {package}"
+
+
 def test_readme_content():
     """Test que verifica el contenido básico del README"""
     
@@ -154,7 +182,7 @@ def test_vercel_config():
         
         # Verificar configuración básica
         required_config = [
-            '"src": "web_app.py"',
+            '"src": "web_app_vercel.py"',
             '"use": "@vercel/python"'
         ]
         

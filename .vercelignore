@@ -1,0 +1,30 @@
+# Archivos de desarrollo local
+main.py
+backtest.py
+*.log
+*.pyc
+__pycache__/
+.env
+
+# Archivos de MT5 (no compatibles con Vercel)
+broker/mt5_connector.py
+strategy/interbank.py
+
+# Tests
+tests/
+*.test.py
+
+# Archivos de configuración local
+config.py
+
+# Archivos de desarrollo
+.venv/
+venv/
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# Archivos de sistema
+.DS_Store
+Thumbs.db

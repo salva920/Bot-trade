@@ -4,11 +4,19 @@ import threading
 import time
 import json
 from datetime import datetime
-import MetaTrader5 as mt5
-from broker.mt5_connector import conectar_mt5, obtener_datos, enviar_orden
-from strategy.interbank import detectar_entrada
-from utils.time_utils import es_horario_ny
 import pandas as pd
+
+# Importaciones condicionales para MT5
+try:
+    import MetaTrader5 as mt5
+    from broker.mt5_connector import conectar_mt5, obtener_datos, enviar_orden
+    from strategy.interbank import detectar_entrada
+    from utils.time_utils import es_horario_ny
+    MT5_AVAILABLE = True
+except ImportError:
+    # Modo demo/web-only cuando MT5 no está disponible
+    MT5_AVAILABLE = False
+    print("⚠️ MetaTrader5 no disponible - ejecutando en modo demo")
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'tu_clave_secreta_aqui'
@@ -52,7 +60,7 @@ def update_bot_status():
     """Actualiza el estado del bot y envía datos al frontend"""
     while bot_status['running']:
         try:
-            if bot_status['connected']:
+            if bot_status['connected'] and MT5_AVAILABLE:
                 # Obtener datos de mercado
                 df_m5 = obtener_datos(timeframe=mt5.TIMEFRAME_M5, n=100)
                 df_m15 = obtener_datos(timeframe=mt5.TIMEFRAME_M15, n=100)
@@ -100,6 +108,21 @@ def update_bot_status():
                     account_info = mt5.account_info()
                     if account_info:
                         bot_status['current_balance'] = account_info.balance
+                
+                # Enviar actualización al frontend
+                socketio.emit('bot_update', bot_status)
+            
+            elif not MT5_AVAILABLE:
+                # Modo demo - simular datos
+                bot_status['last_check'] = datetime.now().strftime('%H:%M:%S')
+                bot_status['tendencies'] = {
+                    'D1': 'BULLISH',
+                    'H4': 'BULLISH', 
+                    'H1': 'NEUTRAL',
+                    'M15': 'BULLISH',
+                    'M5': 'NEUTRAL'
+                }
+                bot_status['current_balance'] = 10000.0
                 
                 # Enviar actualización al frontend
                 socketio.emit('bot_update', bot_status)
@@ -188,7 +211,7 @@ def start_bot():
     """Iniciar el bot"""
     
     if not bot_status['running']:
-        if conectar_mt5():
+        if MT5_AVAILABLE and conectar_mt5():
             bot_status['connected'] = True
             bot_status['running'] = True
             
@@ -197,6 +220,16 @@ def start_bot():
             update_thread.start()
             
             return jsonify({'success': True, 'message': 'Bot iniciado correctamente'})
+        elif not MT5_AVAILABLE:
+            # Modo demo
+            bot_status['connected'] = True
+            bot_status['running'] = True
+            
+            # Iniciar thread de actualización
+            update_thread = threading.Thread(target=update_bot_status, daemon=True)
+            update_thread.start()
+            
+            return jsonify({'success': True, 'message': 'Bot iniciado en modo demo'})
         else:
             return jsonify({'success': False, 'message': 'Error conectando a MT5'})
     
@@ -209,7 +242,7 @@ def stop_bot():
     bot_status['running'] = False
     bot_status['connected'] = False
     
-    if mt5.initialize():
+    if MT5_AVAILABLE and mt5.initialize():
         mt5.shutdown()
     
     return jsonify({'success': True, 'message': 'Bot detenido'})
@@ -225,6 +258,9 @@ def send_order():
     data = request.json
     tipo = data.get('type')
     precio = data.get('price')
+    
+    if not MT5_AVAILABLE:
+        return jsonify({'success': True, 'message': f'Orden {tipo} simulada (modo demo)'})
     
     if enviar_orden(tipo, precio):
         return jsonify({'success': True, 'message': f'Orden {tipo} enviada'})
