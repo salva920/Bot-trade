@@ -17,6 +17,9 @@ tests/
 # Archivos de configuración local
 config.py
 
+# Dependencias de desarrollo local
+requirements-local.txt
+
 # Archivos de desarrollo
 .venv/
 venv/

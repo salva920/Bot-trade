@@ -15,7 +15,7 @@ def test_project_structure():
         'main.py',
         'config.py',
         'requirements.txt',
-        'requirements-vercel.txt',
+        'requirements-local.txt',
         'README.md',
         'VERCEL_DEPLOYMENT.md',
         'LICENSE',
@@ -127,16 +127,16 @@ def test_requirements_file():
 
 
 def test_vercel_requirements_file():
-    """Test que verifica el archivo requirements-vercel.txt"""
+    """Test que verifica el archivo requirements.txt (para Vercel)"""
     
-    vercel_requirements_path = 'requirements-vercel.txt'
-    assert os.path.exists(vercel_requirements_path), "requirements-vercel.txt no existe"
+    vercel_requirements_path = 'requirements.txt'
+    assert os.path.exists(vercel_requirements_path), "requirements.txt no existe"
     
     with open(vercel_requirements_path, 'r', encoding='utf-8') as f:
         content = f.read()
         
         # Verificar que NO contiene MetaTrader5 como dependencia
-        assert 'MetaTrader5==' not in content, "requirements-vercel.txt no debe contener MetaTrader5 como dependencia"
+        assert 'MetaTrader5==' not in content, "requirements.txt no debe contener MetaTrader5 como dependencia"
         
         # Verificar dependencias web importantes
         web_packages = [

@@ -9,7 +9,8 @@ Este proyecto está configurado para funcionar tanto en **desarrollo local** (co
 ### Archivos Específicos de Vercel
 
 - **`web_app_vercel.py`**: Versión simplificada de la aplicación web sin MT5
-- **`requirements-vercel.txt`**: Dependencias sin MetaTrader5
+- **`requirements.txt`**: Dependencias sin MetaTrader5 (para Vercel)
+- **`requirements-local.txt`**: Dependencias con MT5 (para desarrollo local)
 - **`.vercelignore`**: Archivos excluidos del despliegue
 - **`vercel.json`**: Configuración de Vercel
 
@@ -41,9 +42,9 @@ Cuando se despliega en Vercel, la aplicación funciona en **modo demo**:
 
 Vercel detectará automáticamente:
 - **Framework**: Python/Flask
-- **Build Command**: `pip install -r requirements-vercel.txt`
+- **Build Command**: `pip install -r requirements.txt`
 - **Output Directory**: `/`
-- **Install Command**: `pip install -r requirements-vercel.txt`
+- **Install Command**: `pip install -r requirements.txt`
 
 ### 3. Variables de Entorno
 
@@ -56,7 +57,7 @@ FLASK_ENV=production
 ```
 vercel/
 ├── web_app_vercel.py          # App principal para Vercel
-├── requirements-vercel.txt     # Dependencias sin MT5
+├── requirements.txt            # Dependencias sin MT5 (para Vercel)
 ├── vercel.json                # Configuración de Vercel
 ├── .vercelignore              # Archivos excluidos
 └── templates/                 # Plantillas HTML
@@ -79,11 +80,11 @@ ls -la web_app_vercel.py requirements-vercel.txt vercel.json .vercelignore
 ### Verificar Dependencias
 
 ```bash
-# Verificar que requirements-vercel.txt no contiene MT5
-grep -i "metatrader" requirements-vercel.txt
+# Verificar que requirements.txt no contiene MT5
+grep -i "metatrader" requirements.txt
 
 # Verificar dependencias web
-cat requirements-vercel.txt
+cat requirements.txt
 ```
 
 ## 🚨 Solución de Problemas
@@ -91,7 +92,7 @@ cat requirements-vercel.txt
 ### Error: MetaTrader5 no encontrado
 
 **Causa**: Vercel intenta instalar MetaTrader5
-**Solución**: Usar `requirements-vercel.txt` en lugar de `requirements.txt`
+**Solución**: Verificar que `requirements.txt` no contenga MetaTrader5
 
 ### Error: Módulo no encontrado
 
