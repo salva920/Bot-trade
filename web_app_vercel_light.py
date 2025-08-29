@@ -1,27 +1,41 @@
 """
-Aplicación web simplificada para Vercel (sin MetaTrader5)
+Aplicación web ultra-ligera para Vercel (sin MetaTrader5)
 """
 from flask import Flask, render_template, jsonify, request
-import threading
-import time
-import json
 from datetime import datetime
+import time
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'vercel_demo_key'
 
-# Variables globales para el estado del bot (modo demo)
+# Variables globales para el estado del bot (modo demo estático)
 bot_status = {
     'running': False,
-    'connected': False,
-    'last_signal': None,
-    'last_check': None,
-    'total_signals': 0,
-    'successful_trades': 0,
-    'failed_trades': 0,
+    'connected': True,
+    'last_signal': {
+        'type': 'BUY',
+        'price': 1.0850,
+        'factor_riesgo': 1.0,
+        'time': datetime.now().strftime('%H:%M:%S')
+    },
+    'last_check': datetime.now().strftime('%H:%M:%S'),
+    'total_signals': 5,
+    'successful_trades': 3,
+    'failed_trades': 2,
     'current_balance': 10000.0,
-    'tendencies': {},
-    'conditions': {}
+    'tendencies': {
+        'D1': 'BULLISH',
+        'H4': 'BULLISH', 
+        'H1': 'NEUTRAL',
+        'M15': 'BULLISH',
+        'M5': 'NEUTRAL'
+    },
+    'conditions': {
+        'ADX': 28,
+        'Volume': 1.5,
+        'RSI': 45,
+        'ATR': 0.002
+    }
 }
 
 # Configuración del bot (modo demo)
@@ -43,36 +57,6 @@ bot_config = {
     'RSI_MAX': 70,
     'ATR_MIN': 0.001
 }
-
-def update_bot_status():
-    """Actualiza el estado del bot en modo demo"""
-    while bot_status['running']:
-        try:
-            # Simular datos de mercado
-            bot_status['last_check'] = datetime.now().strftime('%H:%M:%S')
-            bot_status['tendencies'] = {
-                'D1': 'BULLISH',
-                'H4': 'BULLISH', 
-                'H1': 'NEUTRAL',
-                'M15': 'BULLISH',
-                'M5': 'NEUTRAL'
-            }
-            
-            # Simular señales ocasionales
-            if time.time() % 300 < 30:  # Cada 5 minutos aproximadamente
-                bot_status['last_signal'] = {
-                    'type': 'BUY' if time.time() % 600 < 300 else 'SELL',
-                    'price': 1.0850 + (time.time() % 100) / 10000,
-                    'factor_riesgo': 1.0,
-                    'time': datetime.now().strftime('%H:%M:%S')
-                }
-                bot_status['total_signals'] += 1
-            
-            time.sleep(30)  # Actualizar cada 30 segundos
-            
-        except Exception as e:
-            print(f"Error en actualización demo: {e}")
-            time.sleep(60)
 
 @app.route('/')
 def dashboard():
@@ -139,15 +123,11 @@ def update_config():
 
 @app.route('/api/start_bot', methods=['POST'])
 def start_bot():
-    """Iniciar el bot en modo demo"""
+    """Simular inicio del bot en modo demo"""
     
     if not bot_status['running']:
-        bot_status['connected'] = True
         bot_status['running'] = True
-        
-        # Iniciar thread de actualización
-        update_thread = threading.Thread(target=update_bot_status, daemon=True)
-        update_thread.start()
+        bot_status['last_check'] = datetime.now().strftime('%H:%M:%S')
         
         return jsonify({'success': True, 'message': 'Bot iniciado en modo demo'})
     
@@ -155,10 +135,9 @@ def start_bot():
 
 @app.route('/api/stop_bot', methods=['POST'])
 def stop_bot():
-    """Detener el bot"""
+    """Simular parada del bot"""
     
     bot_status['running'] = False
-    bot_status['connected'] = False
     
     return jsonify({'success': True, 'message': 'Bot detenido'})
 
@@ -175,6 +154,15 @@ def send_order():
     precio = data.get('price')
     
     return jsonify({'success': True, 'message': f'Orden {tipo} simulada (modo demo)'})
+
+@app.route('/api/health')
+def health_check():
+    """Endpoint de salud para Vercel"""
+    return jsonify({
+        'status': 'healthy',
+        'timestamp': datetime.now().isoformat(),
+        'version': '1.0.0-light'
+    })
 
 if __name__ == '__main__':
     app.run(debug=True, host='0.0.0.0', port=5000)

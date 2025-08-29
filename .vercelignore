@@ -31,3 +31,7 @@ venv/
 # Archivos de sistema
 .DS_Store
 Thumbs.db
+
+# Archivos pesados para Vercel
+web_app_vercel.py
+vercel-build.sh

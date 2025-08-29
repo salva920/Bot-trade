@@ -12,6 +12,7 @@ def test_project_structure():
     required_files = [
         'web_app.py',
         'web_app_vercel.py',
+        'web_app_vercel_light.py',
         'main.py',
         'config.py',
         'requirements.txt',
@@ -105,7 +106,7 @@ def test_config_file_content():
 
 
 def test_requirements_file():
-    """Test que verifica el archivo requirements.txt"""
+    """Test que verifica el archivo requirements.txt (versión ultra-ligera para Vercel)"""
     
     requirements_path = 'requirements.txt'
     assert os.path.exists(requirements_path), "requirements.txt no existe"
@@ -113,13 +114,11 @@ def test_requirements_file():
     with open(requirements_path, 'r', encoding='utf-8') as f:
         content = f.read()
         
-        # Verificar dependencias importantes
+        # Verificar dependencias mínimas para Vercel
         required_packages = [
-            'MetaTrader5',
-            'pandas',
-            'numpy',
             'Flask',
-            'Flask-SocketIO'
+            'python-dotenv',
+            'pytz'
         ]
         
         for package in required_packages:
@@ -127,7 +126,7 @@ def test_requirements_file():
 
 
 def test_vercel_requirements_file():
-    """Test que verifica el archivo requirements.txt (para Vercel)"""
+    """Test que verifica el archivo requirements.txt (versión ultra-ligera para Vercel)"""
     
     vercel_requirements_path = 'requirements.txt'
     assert os.path.exists(vercel_requirements_path), "requirements.txt no existe"
@@ -138,12 +137,11 @@ def test_vercel_requirements_file():
         # Verificar que NO contiene MetaTrader5 como dependencia
         assert 'MetaTrader5==' not in content, "requirements.txt no debe contener MetaTrader5 como dependencia"
         
-        # Verificar dependencias web importantes
+        # Verificar dependencias web mínimas
         web_packages = [
-            'pandas',
-            'numpy',
             'Flask',
-            'Flask-SocketIO'
+            'python-dotenv',
+            'pytz'
         ]
         
         for package in web_packages:
@@ -182,7 +180,7 @@ def test_vercel_config():
         
         # Verificar configuración básica
         required_config = [
-            '"src": "web_app_vercel.py"',
+            '"src": "web_app_vercel_light.py"',
             '"use": "@vercel/python"'
         ]
         
