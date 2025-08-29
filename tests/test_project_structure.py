@@ -117,6 +117,7 @@ def test_requirements_file():
         # Verificar dependencias mínimas para Vercel
         required_packages = [
             'Flask',
+            'Flask-SocketIO',
             'python-dotenv',
             'pytz'
         ]
@@ -140,6 +141,7 @@ def test_vercel_requirements_file():
         # Verificar dependencias web mínimas
         web_packages = [
             'Flask',
+            'Flask-SocketIO',
             'python-dotenv',
             'pytz'
         ]

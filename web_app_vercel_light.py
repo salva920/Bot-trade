@@ -2,11 +2,13 @@
 Aplicación web ultra-ligera para Vercel (sin MetaTrader5)
 """
 from flask import Flask, render_template, jsonify, request
+from flask_socketio import SocketIO, emit
 from datetime import datetime
 import time
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'vercel_demo_key'
+socketio = SocketIO(app, cors_allowed_origins="*")
 
 # Variables globales para el estado del bot (modo demo estático)
 bot_status = {
@@ -129,6 +131,9 @@ def start_bot():
         bot_status['running'] = True
         bot_status['last_check'] = datetime.now().strftime('%H:%M:%S')
         
+        # Enviar actualización al frontend
+        socketio.emit('bot_update', bot_status)
+        
         return jsonify({'success': True, 'message': 'Bot iniciado en modo demo'})
     
     return jsonify({'success': False, 'message': 'Bot ya está ejecutándose'})
@@ -138,6 +143,9 @@ def stop_bot():
     """Simular parada del bot"""
     
     bot_status['running'] = False
+    
+    # Enviar actualización al frontend
+    socketio.emit('bot_update', bot_status)
     
     return jsonify({'success': True, 'message': 'Bot detenido'})
 
@@ -163,6 +171,23 @@ def health_check():
         'timestamp': datetime.now().isoformat(),
         'version': '1.0.0-light'
     })
+
+# Eventos de Socket.IO
+@socketio.on('connect')
+def handle_connect():
+    """Manejar conexión de cliente"""
+    print('Cliente conectado')
+    emit('connected', {'status': 'connected'})
+
+@socketio.on('disconnect')
+def handle_disconnect():
+    """Manejar desconexión de cliente"""
+    print('Cliente desconectado')
+
+@socketio.on('get_status')
+def handle_get_status():
+    """Enviar estado actual del bot"""
+    emit('bot_update', bot_status)
 
 if __name__ == '__main__':
     app.run(debug=True, host='0.0.0.0', port=5000)
