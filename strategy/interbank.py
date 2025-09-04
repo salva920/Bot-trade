@@ -2,6 +2,10 @@ import pandas as pd
 import numpy as np
 from scipy.stats import linregress
 import MetaTrader5 as mt5
+from utils.eurusd_intraday import (
+    validar_entrada_eurusd_intraday,
+    calcular_lote_dinamico_eurusd
+)
 
 # --- Utilidad para obtener tendencia de EMA en un dataframe ---
 def tendencia_ema(df, ema_rapida=20, ema_lenta=50):
@@ -128,7 +132,71 @@ def detectar_entrada(df, df_m5=None, df_m15=None, df_h1=None, df_h4=None, df_d1=
     ultima = df.iloc[-1]
     anterior = df.iloc[-2]
     
-    # --- Filtros mejorados ---
+    # --- VALIDACIÓN EUR/USD INTRADAY OPTIMIZADA ---
+    if all([df_m5 is not None, df_m15 is not None, df_h1 is not None, df_h4 is not None, df_d1 is not None]):
+        # Usar las nuevas utilidades optimizadas para EUR/USD
+        entrada_valida, tendencia = validar_entrada_eurusd_intraday(
+            df_m5, df_m15, df_h1, df_h4, df_d1, debug=debug
+        )
+        
+        if not entrada_valida:
+            if debug: print(f"❌ Entrada no validada: {tendencia}")
+            return None
+        
+        # Si la entrada es válida, proceder con la lógica de señales
+        if debug: print(f"✅ Entrada validada para {tendencia.upper()}")
+        
+        # Aplicar filtros específicos según la tendencia
+        if tendencia == 'alcista':
+            # Condiciones de compra optimizadas para EUR/USD
+            condiciones_compra = [
+                ultima['EMA_rapida'] > ultima['EMA_lenta'],
+                ultima['ADX'] >= 30,  # ADX mínimo más estricto
+                ultima['Pendiente'] > 0.05,
+                ultima['RSI'] <= 35,  # RSI más extremo para entrada
+                ultima['Vol_Relativo'] >= 1.5,  # Volumen mínimo más alto
+                not hay_posicion_abierta(SYMBOL, 'BUY')
+            ]
+            
+            if sum(condiciones_compra) >= 5:  # Necesitamos más condiciones cumplidas
+                if debug: print(f"🚀 Señal COMPRA EUR/USD: {condiciones_compra}")
+                # Calcular lote dinámico
+                try:
+                    balance = mt5.account_info().balance
+                    lote_optimo = calcular_lote_dinamico_eurusd(balance, 1.5, 16)  # 1.5% riesgo, 16 pips SL
+                    if debug: print(f"💰 Lote óptimo: {lote_optimo}")
+                except:
+                    lote_optimo = 0.1  # Lote por defecto
+                
+                return ('BUY', ultima['close'], 1.0, lote_optimo)
+        
+        elif tendencia == 'bajista':
+            # Condiciones de venta optimizadas para EUR/USD
+            condiciones_venta = [
+                ultima['EMA_rapida'] < ultima['EMA_lenta'],
+                ultima['ADX'] >= 30,  # ADX mínimo más estricto
+                ultima['Pendiente'] < -0.05,
+                ultima['RSI'] >= 65,  # RSI más extremo para entrada
+                ultima['Vol_Relativo'] >= 1.5,  # Volumen mínimo más alto
+                not hay_posicion_abierta(SYMBOL, 'SELL')
+            ]
+            
+            if sum(condiciones_venta) >= 5:  # Necesitamos más condiciones cumplidas
+                if debug: print(f"📉 Señal VENTA EUR/USD: {condiciones_venta}")
+                # Calcular lote dinámico
+                try:
+                    balance = mt5.account_info().balance
+                    lote_optimo = calcular_lote_dinamico_eurusd(balance, 1.5, 16)  # 1.5% riesgo, 16 pips SL
+                    if debug: print(f"💰 Lote óptimo: {lote_optimo}")
+                except:
+                    lote_optimo = 0.1  # Lote por defecto
+                
+                return ('SELL', ultima['close'], 1.0, lote_optimo)
+    
+    # --- LÓGICA LEGACY (mantener para compatibilidad) ---
+    # ... existing code ...
+    
+    # Filtros mejorados
     mercado_trending = es_mercado_trending(df)
     horario_volatil = es_horario_volatil()
     

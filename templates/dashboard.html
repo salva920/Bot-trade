@@ -34,6 +34,61 @@
             50% { opacity: 0.5; }
             100% { opacity: 1; }
         }
+        
+        .log-entry {
+            border-left: 3px solid #dee2e6;
+            margin-bottom: 8px;
+            padding: 8px;
+            background: #f8f9fa;
+            border-radius: 0 4px 4px 0;
+            font-size: 0.9em;
+        }
+        .log-entry.INFO { border-left-color: #28a745; }
+        .log-entry.WARNING { border-left-color: #ffc107; }
+        .log-entry.ERROR { border-left-color: #dc3545; }
+        .log-entry.DEBUG { border-left-color: #6c757d; }
+        
+        .log-level {
+            font-weight: bold;
+            padding: 2px 6px;
+            border-radius: 3px;
+            font-size: 0.8em;
+        }
+        .log-level.INFO { background: #d4edda; color: #155724; }
+        .log-level.WARNING { background: #fff3cd; color: #856404; }
+        .log-level.ERROR { background: #f8d7da; color: #721c24; }
+        .log-level.DEBUG { background: #e2e3e5; color: #383d41; }
+        
+        .log-timestamp {
+            color: #6c757d;
+            font-size: 0.8em;
+        }
+        
+        .signal-mini {
+            border-left: 3px solid #dee2e6;
+            margin-bottom: 8px;
+            padding: 8px;
+            background: #f8f9fa;
+            border-radius: 0 4px 4px 0;
+            font-size: 0.9em;
+        }
+        .signal-mini.BUY { border-left-color: #28a745; }
+        .signal-mini.SELL { border-left-color: #dc3545; }
+        
+        .trade-mini {
+            border-left: 3px solid #dee2e6;
+            margin-bottom: 8px;
+            padding: 8px;
+            background: #f8f9fa;
+            border-radius: 0 4px 4px 0;
+            font-size: 0.9em;
+        }
+        .trade-mini.BUY { border-left-color: #28a745; }
+        .trade-mini.SELL { border-left-color: #dc3545; }
+        
+        .profit-positive { color: #28a745; font-weight: bold; }
+        .profit-negative { color: #dc3545; font-weight: bold; }
+        .profit-neutral { color: #6c757d; font-weight: bold; }
     </style>
 </head>
 <body class="bg-light">
@@ -45,6 +100,15 @@
             <div class="navbar-nav ms-auto">
                 <a class="nav-link" href="/config">
                     <i class="fas fa-cog me-1"></i>Configuración
+                </a>
+                <a class="nav-link" href="/logs">
+                    <i class="fas fa-list-alt me-1"></i>Logs
+                </a>
+                <a class="nav-link" href="/signals">
+                    <i class="fas fa-chart-line me-1"></i>Señales
+                </a>
+                <a class="nav-link" href="/trades">
+                    <i class="fas fa-exchange-alt me-1"></i>Trades
                 </a>
             </div>
         </div>
@@ -139,6 +203,42 @@
             </div>
         </div>
 
+        <!-- Logs y Señales en la misma fila -->
+        <div class="row mb-4">
+            <div class="col-md-6">
+                <div class="card status-card">
+                    <div class="card-body">
+                        <h5 class="card-title">
+                            <i class="fas fa-list-alt me-2"></i>Logs en Tiempo Real
+                            <span class="badge bg-success ms-2" id="logs-count">0</span>
+                        </h5>
+                        <div id="recent-logs" style="max-height: 300px; overflow-y: auto;">
+                            <div class="text-center text-muted">
+                                <i class="fas fa-spinner fa-spin"></i>
+                                <p class="mt-2">Cargando logs...</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="card status-card">
+                    <div class="card-body">
+                        <h5 class="card-title">
+                            <i class="fas fa-chart-line me-2"></i>Señales Recientes
+                            <span class="badge bg-primary ms-2" id="signals-count">0</span>
+                        </h5>
+                        <div id="recent-signals" style="max-height: 300px; overflow-y: auto;">
+                            <div class="text-center text-muted">
+                                <i class="fas fa-spinner fa-spin"></i>
+                                <p class="mt-2">Cargando señales...</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
         <!-- Última Señal -->
         <div class="row mb-4">
             <div class="col-12">
@@ -156,32 +256,29 @@
             </div>
         </div>
 
-        <!-- Configuración Actual -->
-        <div class="row">
+
+
+        <!-- Trades Recientes -->
+        <div class="row mb-4">
             <div class="col-12">
                 <div class="card status-card">
                     <div class="card-body">
                         <h5 class="card-title">
-                            <i class="fas fa-sliders-h me-2"></i>Configuración Actual
+                            <i class="fas fa-exchange-alt me-2"></i>Trades Recientes
+                            <span class="badge bg-info ms-2" id="trades-count">0</span>
                         </h5>
-                        <div class="row">
-                            <div class="col-md-3">
-                                <strong>Símbolo:</strong> <span id="config-symbol">{{ config.symbol }}</span>
-                            </div>
-                            <div class="col-md-3">
-                                <strong>Lote:</strong> <span id="config-lot">{{ config.lot_size }}</span>
-                            </div>
-                            <div class="col-md-3">
-                                <strong>ADX Mín:</strong> <span id="config-adx">{{ config.adx_min }}</span>
-                            </div>
-                            <div class="col-md-3">
-                                <strong>Volumen Mín:</strong> <span id="config-volume">{{ config.volume_min }}</span>
+                        <div id="recent-trades" style="max-height: 300px; overflow-y: auto;">
+                            <div class="text-center text-muted">
+                                <i class="fas fa-spinner fa-spin"></i>
+                                <p class="mt-2">Cargando trades...</p>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
+
+
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
@@ -294,6 +391,160 @@
             }, 5000);
         }
         
+        // Variables globales para datos
+        let logsData = [];
+        let signalsData = [];
+        let tradesData = [];
+        
+        // Funciones para formatear datos
+        function formatTimestamp(timestamp) {
+            const date = new Date(timestamp);
+            return date.toLocaleString('es-ES');
+        }
+        
+        function formatLogData(data) {
+            if (!data || Object.keys(data).length === 0) return '';
+            return JSON.stringify(data, null, 2);
+        }
+        
+        function formatProfit(profit) {
+            if (profit > 0) return `<span class="profit-positive">+$${profit.toFixed(2)}</span>`;
+            if (profit < 0) return `<span class="profit-negative">-$${Math.abs(profit).toFixed(2)}</span>`;
+            return `<span class="profit-neutral">$0.00</span>`;
+        }
+        
+        // Función para cargar logs
+        async function loadLogs() {
+            try {
+                const response = await fetch('/api/logs?limit=10');
+                logsData = await response.json();
+                renderLogs();
+            } catch (error) {
+                console.error('Error cargando logs:', error);
+            }
+        }
+        
+        // Función para cargar señales
+        async function loadSignals() {
+            try {
+                const response = await fetch('/api/signals?limit=10');
+                signalsData = await response.json();
+                renderSignals();
+            } catch (error) {
+                console.error('Error cargando señales:', error);
+            }
+        }
+        
+        // Función para cargar trades
+        async function loadTrades() {
+            try {
+                const response = await fetch('/api/trades?limit=10');
+                tradesData = await response.json();
+                renderTrades();
+            } catch (error) {
+                console.error('Error cargando trades:', error);
+            }
+        }
+        
+        // Función para renderizar logs
+        function renderLogs() {
+            const container = document.getElementById('recent-logs');
+            const countElement = document.getElementById('logs-count');
+            
+            countElement.textContent = logsData.length;
+            
+            if (logsData.length === 0) {
+                container.innerHTML = '<div class="text-center text-muted"><i class="fas fa-inbox fa-2x mb-2"></i><p>No hay logs disponibles</p></div>';
+                return;
+            }
+            
+            const logsHtml = logsData.map(log => `
+                <div class="log-entry ${log.level}">
+                    <div class="d-flex justify-content-between align-items-start">
+                        <div class="flex-grow-1">
+                            <span class="log-level ${log.level}">${log.level}</span>
+                            <span class="log-timestamp ms-2">${formatTimestamp(log.timestamp)}</span>
+                            <div class="mt-1">${log.message}</div>
+                            ${log.data && Object.keys(log.data).length > 0 ? 
+                                `<div class="mt-1" style="font-size: 0.8em; color: #6c757d;">${formatLogData(log.data)}</div>` : ''}
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+            
+            container.innerHTML = logsHtml;
+        }
+        
+        // Función para renderizar señales
+        function renderSignals() {
+            const container = document.getElementById('recent-signals');
+            const countElement = document.getElementById('signals-count');
+            
+            countElement.textContent = signalsData.length;
+            
+            if (signalsData.length === 0) {
+                container.innerHTML = '<div class="text-center text-muted"><i class="fas fa-chart-line fa-2x mb-2"></i><p>No hay señales disponibles</p></div>';
+                return;
+            }
+            
+            const signalsHtml = signalsData.map(signal => `
+                <div class="signal-mini ${signal.type}">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <span class="badge ${signal.type === 'BUY' ? 'bg-success' : 'bg-danger'}">${signal.type}</span>
+                            <strong>${signal.price}</strong>
+                            <small class="text-muted ms-2">${formatTimestamp(signal.timestamp)}</small>
+                        </div>
+                        <div>
+                            <small class="text-muted">Factor: ${signal.factor_riesgo || 1.0}</small>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+            
+            container.innerHTML = signalsHtml;
+        }
+        
+        // Función para renderizar trades
+        function renderTrades() {
+            const container = document.getElementById('recent-trades');
+            const countElement = document.getElementById('trades-count');
+            
+            countElement.textContent = tradesData.length;
+            
+            if (tradesData.length === 0) {
+                container.innerHTML = '<div class="text-center text-muted"><i class="fas fa-exchange-alt fa-2x mb-2"></i><p>No hay trades disponibles</p></div>';
+                return;
+            }
+            
+            const tradesHtml = tradesData.map(trade => `
+                <div class="trade-mini ${trade.type}">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <span class="badge ${trade.type === 'BUY' ? 'bg-success' : 'bg-danger'}">${trade.type}</span>
+                            <strong>${trade.symbol}</strong>
+                            <small class="text-muted ms-2">${formatTimestamp(trade.timestamp)}</small>
+                        </div>
+                        <div>
+                            <div>${formatProfit(trade.profit_loss || 0)}</div>
+                            <small class="text-muted">${trade.status}</small>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+            
+            container.innerHTML = tradesHtml;
+        }
+        
+        // Función para cargar todos los datos
+        async function loadAllData() {
+            await Promise.all([
+                loadLogs(),
+                loadSignals(),
+                loadTrades()
+            ]);
+        }
+        
         // Cargar estado inicial
         fetch('/api/status')
             .then(response => response.json())
@@ -304,6 +555,12 @@
                     stopBtn.disabled = false;
                 }
             });
+        
+        // Cargar datos iniciales
+        loadAllData();
+        
+        // Actualizar datos cada 10 segundos
+        setInterval(loadAllData, 10000);
     </script>
 </body>
 </html>
